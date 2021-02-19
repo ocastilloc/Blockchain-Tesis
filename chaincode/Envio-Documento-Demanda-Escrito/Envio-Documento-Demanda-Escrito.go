@@ -7,7 +7,7 @@ package main
 
 import (
         "encoding/json"
-        "fmt"                                                       
+	"fmt"
         "github.com/hyperledger/fabric-contract-api-go/contractapi"
 )
 
@@ -21,8 +21,8 @@ type SmartContract struct {
 //Definir activos Demandante, TipoDocumento y ContenidoDocumento
 
 type Documento struct {
-        Demandante  string `json:"demandante"`
-        TipoDocumento string `json:"tipoDocumento"`
+        Demandante         string `json:"demandante"`
+        TipoDocumento      string `json:"tipoDocumento"`
         ContenidoDocumento string `json:"contenidoDocumento"`
 }
 
@@ -34,39 +34,36 @@ type Documento struct {
 //las demas variables de tipo string son propiedades de los activos
 //Esta función permite almacenar en la red blockchain de pjud.
 
-func (s *SmartContract) Set(ctx contractapi.TransactionContextInterface, docId string, demandante string, tipoDocumento string, contenidoDocumento string) error {
-  
+func (s *SmartContract) Set(ctx contractapi.TransactionContextInterface, documentoId string, demandante string, tipoDocumento string, contenidoDocumento string) error {
     //Validar Existencia de transacción
-    documento, err := s.Query(ctx, docId)
+    doc, err := s.Query(ctx, documentoId)
 
-    if documento != nil{
-        fmt.Printf("docId ya existe, error: %s", err.Error())
+    if doc != nil{
+        fmt.Printf("documentoId ya existe, error: %s", err.Error())
         return err
     }
 
     //estructura de go
-    documento := Documento{
-         Demandante: demandante,
-         TipoDocumento: tipoDocumento,
-         ContenidoDocumento: contenidoDocumento,
+    doc = &Documento{
+              Demandante: demandante,
+              TipoDocumento: tipoDocumento,
+              ContenidoDocumento: contenidoDocumento,
     }
     //transformar a byte al elemento documento
-    documentoAsBytes, err := json.Marshal(documento)
+    documentoAsBytes, err := json.Marshal(doc)
     if err != nil {
        fmt.Printf("Marshal error: %s", err.Error())
        return err
     }
-    
     //PutState permite guardar en el libro distribuido el id y valor
     //el libro es de tipo clave valor distribuido
-    return ctx.GetStub().PutState(foodId, foodAsBytes)
+    return ctx.GetStub().PutState(documentoId, documentoAsBytes)
 
 }
 
 //Función para consultar en el ledger o libro mayor.
 
 func (s *SmartContract) Query(ctx contractapi.TransactionContextInterface, documentoId string) (*Documento, error) {
-  
    //Consultar estado actual esta relacionado con un estampa de tiempo y 
    //transacción de id
    //Historial de los activos
@@ -84,14 +81,13 @@ func (s *SmartContract) Query(ctx contractapi.TransactionContextInterface, docum
       return nil, fmt.Errorf("%s No existe", documentoId)
    }
 
-   documento := new(Documento)
-   
-   err = json.Unmarshal(documentoAsBytes, documento)
+   doc := new(Documento)
+   err = json.Unmarshal(documentoAsBytes, doc)
    if err != nil {
       return nil, fmt.Errorf("Unmarshal error. %s", err.Error())
    }
 
-   return documento, nil
+   return doc, nil
 }
 
 func main() {
