@@ -1,0 +1,234 @@
+##########################################################################
+#   Section: Organizations
+##########################################################################
+    Organizations:
+    
+        - &OrdererOrg
+            Name: OrdererOrg
+            ID: OrdererMSP
+            MSPDir: crypto-config/ordererOrganizations/pjud.cl/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.member')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.member')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('OrdererMSP.admin')"
+            OrdererEndpoints:
+                - orderer.pjud.cl:7050
+    
+        - &Poder-Judicial
+            Name: Poder-JudicialMSP
+            ID: Poder-JudicialMSP
+            MSPDir: crypto-config/peerOrganizations/poder-judicial.pjud.cl/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Poder-JudicialMSP.admin', 'Poder-JudicialMSP.peer', 'Poder-JudicialMSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Poder-JudicialMSP.admin', 'Poder-JudicialMSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Poder-JudicialMSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Poder-JudicialMSP.peer')"
+            AnchorPeers:
+                - Host: peer0.poder-judicial.pjud.cl
+                  Port: 7051
+    
+        - &Participante-Causa
+            Name: Participante-CausaMSP
+            ID: Participante-CausaMSP
+            MSPDir: crypto-config/peerOrganizations/participante-causa.pjud.cl/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Participante-CausaMSP.admin', 'Participante-CausaMSP.peer', 'Participante-CausaMSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Participante-CausaMSP.admin', 'Participante-CausaMSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Participante-CausaMSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Participante-CausaMSP.peer')"
+            AnchorPeers:
+                - Host: peer0.participante-causa.pjud.cl
+                  Port: 7051
+    
+        - &Entidad-Externa
+            Name: Entidad-ExternaMSP
+            ID: Entidad-ExternaMSP
+            MSPDir: crypto-config/peerOrganizations/entidad-externa.pjud.cl/msp
+            Policies:
+                Readers:
+                    Type: Signature
+                    Rule: "OR('Entidad-ExternaMSP.admin', 'Entidad-ExternaMSP.peer', 'Entidad-ExternaMSP.client')"
+                Writers:
+                    Type: Signature
+                    Rule: "OR('Entidad-ExternaMSP.admin', 'Entidad-ExternaMSP.client')"
+                Admins:
+                    Type: Signature
+                    Rule: "OR('Entidad-ExternaMSP.admin')"
+                Endorsement:
+                    Type: Signature
+                    Rule: "OR('Entidad-ExternaMSP.peer')"
+            AnchorPeers:
+                - Host: peer0.entidad-externa.pjud.cl
+                  Port: 7051
+    ###########################################################################
+    #   SECTION: Capabilities    
+    ############################################################################
+    Capabilities:
+        Channel: &ChannelCapabilities
+            V2_0: true
+    
+        Orderer: &OrdererCapabilities
+            V2_0: true
+    
+        Application: &ApplicationCapabilities
+            V2_0: true        
+    
+    ##########################################################################
+    #   SECTION: Application   
+    ###########################################################################
+    Application: &ApplicationDefaults
+    
+        # Organizations is the list of orgs which are defined as participants on
+        # the application side of the network
+        Organizations:
+    
+        # Policies defines the set of policies at this level of the config tree
+        # For Application policies, their canonical path is
+        #   /Channel/Application/<PolicyName>
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            LifecycleEndorsement:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Endorsement"
+            Endorsement:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Endorsement"
+    
+        Capabilities:
+            <<: *ApplicationCapabilities    
+    
+    #########################################################################
+    #   SECTION: Orderer
+    #########################################################################
+    Orderer: &OrdererDefaults
+        # Orderer Type: The orderer implementation to start
+        OrdererType: solo
+    
+    #    OrdererType: etcdraft
+    
+        EtcdRaft:
+            Consenters:
+            - Host: orderer.pjud.cl
+              Port: 7050
+              ClientTLSCert: ../organizations/ordererOrganizations/pjud.cl/orderers/orderer.pjud.cl/tls/server.crt
+              ServerTLSCert: ../organizations/ordererOrganizations/pjud.cl/orderers/orderer.pjud.cl/tls/server.crt
+    
+        Addresses:
+            - orderer.pjud.cl:7050
+        BatchTimeout: 2s
+        BatchSize:
+            MaxMessageCount: 10
+            AbsoluteMaxBytes: 99 MB
+            PreferredMaxBytes: 512 KB
+    
+        Kafka:
+            Brokers:
+                - 127.0.0.1:9092
+        Organizations:
+    
+        Policies:
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+            # BlockValidation specifies what signatures must be included in the block
+            # from the orderer for the peer to validate it.
+            BlockValidation:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+    
+    ##########################################################################
+#
+#   CHANNEL
+#
+#   This section defines the values to encode into a config transaction or
+#   genesis block for channel related parameters.
+#  ##########################################################################
+    Channel: &ChannelDefaults
+    # Policies defines the set of policies at this level of the config tree
+        # For Channel policies, their canonical path is
+        #   /Channel/<PolicyName>
+        Policies:
+            # Who may invoke the 'Deliver' API
+            Readers:
+                Type: ImplicitMeta
+                Rule: "ANY Readers"
+            # Who may invoke the 'Broadcast' API
+            Writers:
+                Type: ImplicitMeta
+                Rule: "ANY Writers"
+            # By default, who may modify elements at this config level
+            Admins:
+                Type: ImplicitMeta
+                Rule: "MAJORITY Admins"
+    
+        # Capabilities describes the channel level capabilities, see the
+        # dedicated Capabilities section elsewhere in this file for a full
+        # description
+        Capabilities:
+            <<: *ChannelCapabilities
+    
+    ###########################################################################
+    #   Profile   ################################################################
+    Profiles:
+    
+        ThreeOrgsOrdererGenesis:
+            <<: *ChannelDefaults
+            Orderer:
+                <<: *OrdererDefaults
+                Organizations:
+                    - *OrdererOrg
+                Capabilities:
+                    <<: *OrdererCapabilities
+            Consortiums:
+                SampleConsortium:
+                    Organizations:
+                        - *Poder-Judicial
+                        - *Participante-Causa
+                        - *Entidad-Externa
+        ThreeOrgsChannel:
+            Consortium: SampleConsortium
+            <<: *ChannelDefaults
+            Application:
+                <<: *ApplicationDefaults
+                Organizations:
+                    - *Poder-Judicial
+                    - *Participante-Causa
+                    - *Entidad-Externa
+                Capabilities:
+                    <<: *ApplicationCapabilities

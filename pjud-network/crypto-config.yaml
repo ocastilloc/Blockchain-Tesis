@@ -1,0 +1,36 @@
+OrdererOrgs:
+    - Name: Orderer
+      Domain: pjud.cl
+      EnableNodeOUs: true
+      Specs:
+        - Hostname: orderer
+          SANS:
+            - localhost
+PeerOrgs:
+    - Name: Poder-Judicial
+      Domain: poder-judicial.pjud.cl
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: Participante-Causa
+      Domain: participante-causa.pjud.cl
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
+    - Name: Entidad-Externa
+      Domain: entidad-externa.pjud.cl
+      EnableNodeOUs: true
+      Template:
+        Count: 1
+        SANS:
+          - localhost
+      Users:
+        Count: 1
