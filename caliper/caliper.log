@@ -1,0 +1,5 @@
+2021.02.22-12:49:19.107[90m debug[39m [caliper] [blockchain] 	Constructed a winston logger with the specified settings
+2021.02.22-12:49:19.292[33m warn [39m [caliper] [bind] 	Working directory not specified. Using "/home/pjud-blockchain/BlockChainPjud/Blockchain-Tesis"
+2021.02.22-12:49:19.294[32m info [39m [caliper] [bind] 	Binding for fabric@latest-v2. This might take some time...
+2021.02.22-12:49:19.294[32m info [39m [caliper] [bind] 	Using working directory: /home/pjud-blockchain/BlockChainPjud/Blockchain-Tesis
+2021.02.22-12:49:19.294[32m info [39m [caliper] [bind] 	Calling npm with: install fabric-common@2.1.0 fabric-protos@2.1.0 fabric-network@2.1.0 fabric-ca-client@2.1.0

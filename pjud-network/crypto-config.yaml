@@ -7,8 +7,8 @@ OrdererOrgs:
           SANS:
             - localhost
 PeerOrgs:
-    - Name: Poder-Judicial
-      Domain: poder-judicial.pjud.cl
+    - Name: PoderJudicial
+      Domain: poderjudicial.pjud.cl
       EnableNodeOUs: true
       Template:
         Count: 1
@@ -16,8 +16,8 @@ PeerOrgs:
           - localhost
       Users:
         Count: 1
-    - Name: Participante-Causa
-      Domain: participante-causa.pjud.cl
+    - Name: ParticipanteCausa
+      Domain: participantecausa.pjud.cl
       EnableNodeOUs: true
       Template:
         Count: 1
@@ -25,8 +25,8 @@ PeerOrgs:
           - localhost
       Users:
         Count: 1
-    - Name: Entidad-Externa
-      Domain: entidad-externa.pjud.cl
+    - Name: EntidadExterna
+      Domain: entidadexterna.pjud.cl
       EnableNodeOUs: true
       Template:
         Count: 1
