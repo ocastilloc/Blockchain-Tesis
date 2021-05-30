@@ -24,6 +24,7 @@ type Documento struct {
         Demandante         string `json:"demandante"`
         TipoDocumento      string `json:"tipoDocumento"`
         ContenidoDocumento string `json:"contenidoDocumento"`
+	EstadoDocumento    string `json:"estadoDocumento"` 
 }
 
 //Funciones
@@ -34,7 +35,7 @@ type Documento struct {
 //las demas variables de tipo string son propiedades de los activos
 //Esta función permite almacenar en la red blockchain de pjud.
 
-func (s *SmartContract) Set(ctx contractapi.TransactionContextInterface, documentoId string, demandante string, tipoDocumento string, contenidoDocumento string) error {
+func (s *SmartContract) Set(ctx contractapi.TransactionContextInterface, documentoId string, demandante string, tipoDocumento string, contenidoDocumento string, estadoDocumento string) error {
     //Validar Existencia de transacción
     doc, err := s.Query(ctx, documentoId)
 
@@ -48,6 +49,7 @@ func (s *SmartContract) Set(ctx contractapi.TransactionContextInterface, documen
               Demandante: demandante,
               TipoDocumento: tipoDocumento,
               ContenidoDocumento: contenidoDocumento,
+	      EstadoDocumento: estadoDocumento,
     }
     //transformar a byte al elemento documento
     documentoAsBytes, err := json.Marshal(doc)
@@ -78,7 +80,7 @@ func (s *SmartContract) Query(ctx contractapi.TransactionContextInterface, docum
    }
 
    if documentoAsBytes == nil {
-      return nil, fmt.Errorf("%s No existe", documentoId)
+      return nil, fmt.Errorf("%s No existe el registro en la organización consultada", documentoId)
    }
 
    doc := new(Documento)
